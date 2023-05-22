@@ -48,11 +48,11 @@ public class Artigo {
         this.estado = estado;
     }
 
-    public String getData_criacao() {
+    public String getDataCriacao() {
         return data_criacao;
     }
 
-    public void setData_criacao(String data_criacao) {
+    public void setDataCriacao(String data_criacao) {
         this.data_criacao = data_criacao;
     }
 }
