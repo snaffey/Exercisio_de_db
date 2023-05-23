@@ -1,4 +1,4 @@
-package com.example.aplicacaoabilio.bd.helper;
+package com.example.db.db.helper;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -46,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_TAG = "CREATE TABLE "+TABLE_TAG+" ( "+KEY_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+KEY_NOME+" TEXT )";
 
     // Instrução SQL para criação da tabela ARTIGO_TAG
-    private static final String CREATE_TABLE_ARTIGO_TAG = "CREATE TABLE "+TABLE_ARTIGO_TAG+" ( "+KEY_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+KEY_ARTIGO_ID+" INTEGER, "+KEY_ARTIGO_ID+" INTEGER)";
+    private static final String CREATE_TABLE_ARTIGO_TAG = "CREATE TABLE " + TABLE_ARTIGO_TAG + " ( " + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_ARTIGO_ID + " INTEGER, " + KEY_TAG_ID + " INTEGER)";
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
         super(context, name, factory, version);
@@ -146,31 +146,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             artigo.setDataCriacao(c.getString(c.getColumnIndex(KEY_DATA_CRIACAO)));
             return artigo;
         }
+        return null;
+    }
 
-        // Devolver todos os artigos numa lista
-        public List<Artigo> obterArtigos(String nomeTag){
-            String query;
-            List<Artigo> artigos = new ArrayList<Artigo>();
-            if (nomeTag == "")
-                query = "SELECT * FROM " + TABLE_ARTIGO;
-            else
-                query = "SELECT * FROM " + TABLE_ARTIGO + " ta, " + TABLE_TAG + " tt, " + TABLE_ARTIGO_TAG + " tat WHERE tt." + KEY_NOME + " = '" + nomeTag + "'" + " AND tt." + KEY_ID + " = " + "tat." + KEY_TAG_ID + " AND ta." + KEY_ID + " = " + "tat." + KEY_ARTIGO_ID;
-        }
-
+    // Devolver todos os artigos numa lista
+    public List<Artigo> obterArtigos(String nomeTag){
+        String query;
+        List<Artigo> artigos = new ArrayList<Artigo>();
+        if(nomeTag.equals(""))
+            query = "SELECT * FROM "+TABLE_ARTIGO;
+        else
+            query = "SELECT * FROM "+TABLE_ARTIGO+" ta, "+TABLE_TAG+" tt, "+TABLE_ARTIGO_TAG+" tat WHERE tt."+KEY_NOME+" = '"+nomeTag+"' AND tt."+KEY_ID+" = tat."+KEY_TAG_ID+" AND ta."+KEY_ID+" = tat."+KEY_ARTIGO_ID;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
-        //Iterar
-        if (c.moveToFirst()) {
-            do {
+        // Iterar
+        if(c.moveToFirst()){
+            do{
                 Artigo artigo = new Artigo();
                 artigo.setId(c.getInt(c.getColumnIndex(KEY_ID)));
                 artigo.setTitulo(c.getString(c.getColumnIndex(KEY_TITUTLO)));
                 artigo.setUrl(c.getString(c.getColumnIndex(KEY_URL)));
                 artigo.setEstado(c.getInt(c.getColumnIndex(KEY_ESTADO)));
                 artigo.setDataCriacao(c.getString(c.getColumnIndex(KEY_DATA_CRIACAO)));
-                // Adicionar à lista
                 artigos.add(artigo);
-            } while (c.moveToNext());
+            }while(c.moveToFirst());
         }
         return artigos;
 
